@@ -16,7 +16,7 @@ def create_todo(todo: TodoCreate, db: List[Todo] = Depends(get_db)):
 
 @app.get("/todos/", response_model=List[Todo])
 def read_todos(skip: int = 0, limit: int = 10, db: List[Todo] = Depends(get_db)):
-    return db[skip:limit]
+    return db[skip:skip + limit]
 
 @app.get("/todos/{todo_id}", response_model=Todo)
 def read_todo(todo_id: int, db: List[Todo] = Depends(get_db)):
