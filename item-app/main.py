@@ -20,6 +20,8 @@ def add_item(item: Item):
     for i in inventory.items:
         if i.id == item.id:
             raise HTTPException(status_code=400, detail="Item with this ID already exists.")
+        if i.name == item.name:
+            raise HTTPException(status_code=400, detail="Item with this name already exists.")
     inventory.items.append(item)
     return {"message": "Item added successfully", "item": item}
 
