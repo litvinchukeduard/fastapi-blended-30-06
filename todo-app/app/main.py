@@ -9,6 +9,7 @@ app = FastAPI()
 @app.post("/todos/", response_model=Todo)
 def create_todo(todo: TodoCreate, db: List[Todo] = Depends(get_db)):
     # db.append(todo)
+    # print('hello')
     # return todo
     todo_model = Todo(id=len(db) + 1, title=todo.title, description=todo.description, completed=todo.completed)
     db.append(todo_model)
