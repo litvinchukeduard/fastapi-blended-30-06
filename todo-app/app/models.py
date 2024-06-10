@@ -8,8 +8,12 @@ class Todo(BaseModel):
     description: str = None
     completed: bool = False
 
+    def __str__(self) -> str:
+        return f'Todo({self.title}, {self.description}, {self.completed})'
+
     class Config:
         orm_mode = True
+
 
 db = [
         Todo(id=1, title="Learn FastAPI", description="Study FastAPI framework", completed=False),

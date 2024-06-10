@@ -27,11 +27,14 @@ def read_todo(todo_id: int, db: List[Todo] = Depends(get_db)):
 
 @app.patch("/todos/{todo_id}", response_model=Todo)
 def update_todo(todo_id: int, todo: TodoUpdate, db: List[Todo] = Depends(get_db)):
+    print(todo)
     for index, t in enumerate(db):
         if t.id == todo_id:
+            print(t)
             db[index].title = todo.title
-            db[index].description = todo.description
-            db[index].completed = todo.completed
+            db[index].description = todo.description if todo.description else db[index].description
+            if todo.completed:
+                db[index].completed = todo.completed
             return db[index]
     raise HTTPException(status_code=404, detail="Todo not found")
 
