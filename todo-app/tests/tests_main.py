@@ -1,40 +1,38 @@
 '''
-# Report 1 Creating a new TODO returns status 500
+Report 2 Get request returns incorrect number of todos
+Description
 
-## Description
+    Delete all todos
 
-Send a POST request to `/todos`
+    Create 15 todos
 
-```json
-{
-  "title": "Report a bug",
-  "description": "Create a bug report for /todos",
-  "completed": true
-}
-```
+    Send a GET request to /todos with skip=5 and limit=10
 
-## Expected result
+Expected result
 
-Status `200 OK`
+Status 200 OK
 
-## Actual result 
+Received 10 Todos
+Actual result
 
-Status `500 Internal Server Error`
+Status 200 OK
+
+Received 5 Todos
 '''
 
 from fastapi.testclient import TestClient
 from pytest import fixture
 
 from app.main import app
-from app.models import get_db
+from app.models import get_db, Todo
+
+test_db = [
+        Todo(id=1, title="Learn FastAPI", description="Study FastAPI framework", completed=False),
+        Todo(id=2, title="Build API", description="Build an API with FastAPI", completed=False),
+    ]
 
 def get_test_db():
-    test_db = []
-    # global test_db
-    try:
-        yield test_db
-    finally:
-        test_db = []
+    return test_db
 
 @fixture(scope="module")
 def client():
@@ -54,3 +52,33 @@ def test_create_todo_success(client):
 
     # then
     assert response.status_code == 200
+
+def test_get_all_todos_correct_number(client):
+    # given
+
+    # Deleting all todos
+    response = client.get('/todos/?skip=0&limit=10')
+    for todo in response.json():
+        client.delete(f"/todos/{todo['id']}")
+
+    response = client.get('/todos/?skip=0&limit=10')
+    assert len(response.json()) == 0
+
+    # Create 20 todo
+    new_todo = {
+        "title": "Report a bug",
+        "description": "Create a bug report for /todos",
+        "completed": True
+    }
+    for _ in range(1, 21):
+        client.post('/todos', json=new_todo)
+
+    response = client.get('/todos/?skip=0&limit=20')
+    assert len(response.json()) == 20
+
+    # when
+    response = client.get('/todos/?skip=5&limit=10')
+
+    # then
+    assert response.status_code == 200
+    assert len(response.json()) == 10
