@@ -8,9 +8,13 @@ app = FastAPI()
 
 @app.post("/todos/", response_model=Todo)
 def create_todo(todo: TodoCreate, db: List[Todo] = Depends(get_db)):
-    todo_db = Todo(id=len(db) + 1, title=todo.title, description=todo.description, completed=todo.completed)
-    db.append(todo_db)
-    return todo_db
+    # db.append(todo)
+    # print('hello')
+    # return todo
+    # print(db)
+    todo_model = Todo(id=len(db) + 1, title=todo.title, description=todo.description, completed=todo.completed)
+    db.append(todo_model)
+    return todo_model
 
 @app.get("/todos/", response_model=List[Todo])
 def read_todos(skip: int = 0, limit: int = 10, db: List[Todo] = Depends(get_db)):
